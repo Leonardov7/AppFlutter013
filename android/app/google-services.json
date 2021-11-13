@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "227294544840",
+    "project_id": "appmovil13-ed1a1",
+    "storage_bucket": "appmovil13-ed1a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227294544840:android:ee5bd395447b5b14ddb6fd",
+        "android_client_info": {
+          "package_name": "com.unbosque.appmovil13"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "227294544840-gfeuo6il4hmbojo55g8nqjeocnvuqrd2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5SKUhXsYzh3KIbQwfD0dpLTVg45bWYvw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "227294544840-gfeuo6il4hmbojo55g8nqjeocnvuqrd2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
