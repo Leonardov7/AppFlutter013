@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'busqueda.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+//comentario1
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp();
