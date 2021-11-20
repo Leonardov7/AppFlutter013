@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'busqueda.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'ShopList.dart';
+import 'Tiendas/ShopList.dart';
+import 'Tiendas/RegistroTienda.dart';
+import 'Usuarios/GestionUsuario.dart';
 
 //comentario
 void main() {
@@ -75,7 +77,30 @@ class IndexStart extends State<Index> {
                             MaterialPageRoute(builder: (_) => ShopList()));
                       },
                       child: Text('Lista de tiendas'),
-                    )),
+                    )
+                ),
+                Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        //   print("Presionó el botón");
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => RegistroTienda()));
+                      },
+                      child: Text('Nueva tienda'),
+                    )
+                ),
+                Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        //   print("Presionó el botón");
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => GestionUsuario()));
+                      },
+                      child: Text('Gestion usuario'),
+                    )
+                ),
               ],
             ),
           ),
