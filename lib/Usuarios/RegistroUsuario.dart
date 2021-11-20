@@ -28,9 +28,10 @@ class RegistroUsuarioApp extends State<RegistroUsuario> {
         "Contraseña":pass.text,
         "Estado":true
       });
-
+      mensaje1("Correcto","Registro correto");
     } catch (e) {
       print(e);
+      mensaje("Error...",""+e.toString());
     }
   }
 
@@ -112,9 +113,11 @@ class RegistroUsuarioApp extends State<RegistroUsuario> {
                     telefono.clear();
                     correo.clear();
                     pass.clear();
+
                   },
                   child: Text("Registrar"),
-                )),
+                ),
+            ),
           ],
         ),
       ),
@@ -140,5 +143,22 @@ class RegistroUsuarioApp extends State<RegistroUsuario> {
       }
     );
   }
+  void mensaje1(String titulo,String mess){
+    showDialog(context: context, builder: (builcontex){
+      return AlertDialog(
+        title: Text(titulo),
+        content: Text(mess),
+        actions: [
+          RaisedButton(onPressed: (){
+            Navigator.of(context).pop();
+          },
+            child: Text("Aceptar",
+              style: TextStyle(color:Colors.teal),),
+          ),
+        ],
+      );
+    });
+  }
+
 }
 
