@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../busqueda.dart';
 class Login extends StatefulWidget {
   @override
@@ -88,6 +89,7 @@ class LoginApp extends State<Login> {
                 style: ElevatedButton.styleFrom(minimumSize: Size(200, 45)),
                 onPressed: () {
                   validarDatos();
+                  //correo.text="Hola mundo";
                 },
                 child: Text("Enviar"),
               ),
