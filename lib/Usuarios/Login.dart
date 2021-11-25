@@ -25,8 +25,7 @@ class LoginApp extends State<Login> {
             if (cursor.get("Contraseña")==pass.text){
               print("usuario_encontrado");
               flag=1;
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => busqueda()));
+             // Navigator.push(context,MaterialPageRoute(builder: (_) => busqueda()));
             }
           }
         }//fin de for

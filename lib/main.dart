@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'busqueda.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'Tiendas/ShopList.dart';
 import 'Tiendas/RegistroTienda.dart';
 import 'Usuarios/GestionUsuario.dart';
+import 'Tiendas/GestionTienda.dart';
 
 //comentario
 void main() {
@@ -27,6 +27,7 @@ class Index extends StatefulWidget {
 
 @override
 class IndexStart extends State<Index> {
+  TextEditingController buscar=TextEditingController();
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'AppMovil',
@@ -52,6 +53,7 @@ class IndexStart extends State<Index> {
                   padding:
                       EdgeInsets.only(left: 25, top: 25, right: 25, bottom: 0),
                   child: TextField(
+                    controller: buscar,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Búsqueda',
@@ -61,38 +63,31 @@ class IndexStart extends State<Index> {
                 Padding(
                     padding: EdgeInsets.only(top: 20),
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(minimumSize: Size(200, 45)),
                       onPressed: () {
-                        print("Presionó el botón");
+                        //print("Presionó el botón");
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => busqueda()));
+                            MaterialPageRoute(builder: (_) => busqueda(buscar.text)));
                       },
                       child: Text('Buscar'),
                     )),
                 Padding(
                     padding: EdgeInsets.only(top: 20),
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(minimumSize: Size(200, 45)),
                       onPressed: () {
                      //   print("Presionó el botón");
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => ShopList()));
+                            MaterialPageRoute(builder: (_) => GestionTienda()));
                       },
-                      child: Text('Lista de tiendas'),
+                      child: Text('Gestión tiendas'),
                     )
                 ),
+
                 Padding(
                     padding: EdgeInsets.only(top: 20),
                     child: ElevatedButton(
-                      onPressed: () {
-                        //   print("Presionó el botón");
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => RegistroTienda()));
-                      },
-                      child: Text('Nueva tienda'),
-                    )
-                ),
-                Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(minimumSize: Size(200, 45)),
                       onPressed: () {
                         //   print("Presionó el botón");
                         Navigator.push(context,
