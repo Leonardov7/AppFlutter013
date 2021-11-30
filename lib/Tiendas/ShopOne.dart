@@ -10,10 +10,12 @@ class ShopOne extends StatefulWidget {
 }
 
 class ShopOneApp extends State<ShopOne> {
+  final firebase = FirebaseFirestore.instance;
   String logo = "";
   String titulo = "";
   //String idTienda="";
-  String descripcion="";
+  String descripcion = "";
+  int cont = 0;
   ShopOneApp() {
     buscarDoc();
   }
@@ -29,12 +31,29 @@ class ShopOneApp extends State<ShopOne> {
           if (cursor.id == widget.docId) {
             this.logo = cursor.get("rutaFoto");
             this.titulo = cursor.get("nombreTienda");
+
             print(widget.docId + " id importado");
           }
         }
       }
     } catch (e) {
       print(e);
+    }
+  }
+
+  agregarCarrito() async {
+
+    try {
+      await firebase.collection("Carrito").doc("DocId").set({
+        "UsuarioId": "PEPITO",
+        "ProductoId" + cont.toString(): widget.docId,
+        "conteo": cont + 1,
+        "Estado": true
+      });
+      // mensaje1("Correcto","Registro correto");
+    } catch (e) {
+      print(e);
+      // mensaje("Error...",""+e.toString());
     }
   }
 
@@ -129,27 +148,29 @@ class ShopOneApp extends State<ShopOne> {
                 ),
               ),
               Center(
-              child: Row(
-
+                child: Row(
                   children: [
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    "Productos",
-                    style: TextStyle(fontSize: 25, color: Colors.blueGrey),
-                  ),
+                    Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Text(
+                        "Productos",
+                        style: TextStyle(fontSize: 25, color: Colors.blueGrey),
+                      ),
+                    ),
+                    FloatingActionButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    RegistroProducto(widget.docId)));
+                      },
+                      //child: const Icon(Icons.add_box),
+                      child: Text("add"),
+                      tooltip: "Agregar producto",
+                    )
+                  ],
                 ),
-                FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context, MaterialPageRoute(builder: (_) => RegistroProducto(widget.docId)));
-
-                  },
-                  //child: const Icon(Icons.add_box),
-                  child: Text("add"),
-                  tooltip: "Agregar producto",
-                )
-              ],),
               ),
               Expanded(
                 child: StreamBuilder(
@@ -160,76 +181,85 @@ class ShopOneApp extends State<ShopOne> {
                       AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (!snapshot.hasData) return CircularProgressIndicator();
                     return ListView.builder(
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          if (snapshot.data!.docs[index].get("IdTienda")==widget.docId) {
-                            return new Card(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(15),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          /*1*/
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              /*2*/
-                                              Container(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 8),
-                                                child: Text(
-                                                  snapshot.data!.docs[index]
-                                                      .get("Nombre"),
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                              Text(
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        if (snapshot.data!.docs[index].get("IdTienda") ==
+                            widget.docId) {
+                          return new Card(
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(15),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        /*1*/
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            /*2*/
+                                            Container(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 8),
+                                              child: Text(
                                                 snapshot.data!.docs[index]
-                                                    .get("Descripcion"),
+                                                    .get("Nombre"),
                                                 style: TextStyle(
-                                                  color: Colors.grey[500],
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                            Text(
+                                              snapshot.data!.docs[index]
+                                                  .get("Descripcion"),
+                                              style: TextStyle(
+                                                color: Colors.grey[500],
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        /*3*/
-                                        Container(
-                                          width: 70,
-                                          height: 70,
-                                          child: Image.asset(
-                                            "image/" +
-                                                snapshot.data!.docs[index]
-                                                    .get("imagen"),
-                                          ),
+                                      ),
+                                      /*3*/
+                                      Container(
+                                        width: 70,
+                                        height: 70,
+                                        child: Image.asset(
+                                          "image/" +
+                                              snapshot.data!.docs[index]
+                                                  .get("imagen"),
                                         ),
-                                        ElevatedButton(
-                                            onPressed: () {
-                                              String idDoc =
-                                                  snapshot.data!.docs[index].id;
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (_) =>
-                                                          ShopOne(idDoc)));
-                                            },
-                                            child: Text("Entrar"))
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            );
-                          }// fin if
-                          else{
-                            return new Card();
-                          }
-                        },);
+                                      ),
+                                      FloatingActionButton(
+                                        onPressed: () {
+                                          agregarCarrito();
+                                        },
+                                        child:
+                                            const Icon(Icons.add_shopping_cart),
+                                        tooltip: "Agregar al carrito",
+                                        backgroundColor: Colors.blue,
+                                      ),
+                                      FloatingActionButton(
+                                        onPressed: () {
+
+                                        },
+                                        //child: const Icon(Icons.add_shopping_cart),
+                                        child: Text("Ver"),
+                                        tooltip: "Agregar al carrito",
+                                        backgroundColor: Colors.blue,
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        } // fin if
+                        else {
+                          return new Card();
+                        }
+                      },
+                    );
                   },
                 ),
               )
