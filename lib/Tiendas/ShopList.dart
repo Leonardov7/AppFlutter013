@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'ShopOne.dart';
 
 class ShopList extends StatefulWidget {
   @override
@@ -73,8 +74,8 @@ class ShopListApp extends State<ShopList> {
                                 ),
                                 ElevatedButton(
                                     onPressed: () {
-                                      snapshot.data!.docs[index]
-                                          .id;
+                                      String idDoc=snapshot.data!.docs[index].id;
+                                      Navigator.push(context, MaterialPageRoute(builder: (_) => ShopOne(idDoc)));
                                     }, child: Text("Entrar"))
                               ],
                             ),
