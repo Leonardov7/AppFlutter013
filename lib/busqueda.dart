@@ -79,7 +79,7 @@ class BusquedaApp extends State<busqueda>{
                                 ElevatedButton(
                                     onPressed: () {
                                       this.idDoc=snapshot.data!.docs[index].id;
-                                      Navigator.push(context, MaterialPageRoute(builder: (_) => ShopOne(this.idDoc)));
+                                     // Navigator.push(context, MaterialPageRoute(builder: (_) => ShopOne(this.idDoc)));
 
                                     }, child: Text("Entrar"))
                               ],

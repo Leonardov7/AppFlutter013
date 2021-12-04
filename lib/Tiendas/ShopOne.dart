@@ -1,26 +1,29 @@
+import 'package:appmovil13/Tiendas/ObjetoTienda.dart';
+import 'package:appmovil13/Usuarios/Login.dart';
+import 'package:appmovil13/Usuarios/Token.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:appmovil13/Productos/RegistroProducto.dart';
 
 class ShopOne extends StatefulWidget {
-  final String docId;
-  ShopOne(this.docId);
+  final ObjetoTienda tiendaObj;
+  ShopOne(this.tiendaObj);
   @override
   ShopOneApp createState() => ShopOneApp();
 }
 
 class ShopOneApp extends State<ShopOne> {
   final firebase = FirebaseFirestore.instance;
-  String logo = "";
-  String titulo = "";
+ // String logo = "";
+ // String titulo = "";
   //String idTienda="";
-  String descripcion = "";
+ // String descripcion = "";
   int cont = 0;
   ShopOneApp() {
-    buscarDoc();
+   // buscarDoc();
   }
 
-  buscarDoc() async {
+ /* buscarDoc() async {
     try {
       CollectionReference ref =
           FirebaseFirestore.instance.collection("Tiendas");
@@ -28,29 +31,28 @@ class ShopOneApp extends State<ShopOne> {
 
       if (tienda.docs.length != 0) {
         for (var cursor in tienda.docs) {
-          if (cursor.id == widget.docId) {
-            this.logo = cursor.get("rutaFoto");
+          if (cursor.id == widget.tiendaObj.idTienda) {
+          //  this.logo = cursor.get("rutaFoto");
             this.titulo = cursor.get("nombreTienda");
 
-            print(widget.docId + " id importado");
+           // print(widget.docId + " id importado");
           }
         }
       }
     } catch (e) {
       print(e);
     }
-  }
+  }*/
 
-  agregarCarrito() async {
+  agregarCarrito(String idTienda,String idUser,String idItem) async {
 
     try {
-      await firebase.collection("Carrito").doc("DocId").set({
-        "UsuarioId": "PEPITO",
-        "ProductoId" + cont.toString(): widget.docId,
-        "conteo": cont + 1,
-        "Estado": true
+      await firebase.collection("Carrito").doc().set({
+        "UsuarioId": idUser,
+        "TiendaId": idTienda,
+        "ProductoId": idItem
       });
-      // mensaje1("Correcto","Registro correto");
+      //mensaje("Correcto","Registro correto");
     } catch (e) {
       print(e);
       // mensaje("Error...",""+e.toString());
@@ -59,7 +61,7 @@ class ShopOneApp extends State<ShopOne> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.docId);
+   // print(widget.docId);
     Widget titleSection = Container(
       padding: const EdgeInsets.all(32),
       child: Row(
@@ -73,14 +75,14 @@ class ShopOneApp extends State<ShopOne> {
                 Container(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
-                    titulo,
+                    widget.tiendaObj.nombre,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 Text(
-                  this.descripcion,
+                  widget.tiendaObj.des_corta,
                   style: TextStyle(
                     color: Colors.grey[500],
                   ),
@@ -125,10 +127,10 @@ class ShopOneApp extends State<ShopOne> {
     );
 
     return MaterialApp(
-      title: titulo,
+      title: widget.tiendaObj.nombre,
       home: Scaffold(
           appBar: AppBar(
-            title: Text(titulo),
+            title: Text(widget.tiendaObj.nombre),
           ),
           body: Column(
             children: [
@@ -136,7 +138,7 @@ class ShopOneApp extends State<ShopOne> {
                 child: ListView(
                   children: [
                     Image.asset(
-                      'image/' + this.logo,
+                      'image/' + widget.tiendaObj.imagen,
                       width: 600,
                       height: 240,
                       fit: BoxFit.cover,
@@ -163,7 +165,7 @@ class ShopOneApp extends State<ShopOne> {
                             context,
                             MaterialPageRoute(
                                 builder: (_) =>
-                                    RegistroProducto(widget.docId)));
+                                    RegistroProducto(widget.tiendaObj.idTienda)));
                       },
                       //child: const Icon(Icons.add_box),
                       child: Text("add"),
@@ -184,7 +186,7 @@ class ShopOneApp extends State<ShopOne> {
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (BuildContext context, int index) {
                         if (snapshot.data!.docs[index].get("IdTienda") ==
-                            widget.docId) {
+                            widget.tiendaObj.idTienda) {
                           return new Card(
                             child: Column(
                               children: [
@@ -231,8 +233,17 @@ class ShopOneApp extends State<ShopOne> {
                                         ),
                                       ),
                                       FloatingActionButton(
-                                        onPressed: () {
-                                          agregarCarrito();
+                                        onPressed: () async {
+                                         // agregarCarrito();
+                                          Token tk=new Token();
+                                          String idUser= await tk.validarToken();
+                                          print(idUser);
+                                          if(idUser !=  ""){
+                                            agregarCarrito(widget.tiendaObj.idTienda,idUser,snapshot.data!.docs[index].id);
+                                          }else{
+                                            Navigator.push(context,
+                                                    MaterialPageRoute(builder: (_) => Login()));
+                                          }
                                         },
                                         child:
                                             const Icon(Icons.add_shopping_cart),
@@ -245,7 +256,7 @@ class ShopOneApp extends State<ShopOne> {
                                         },
                                         //child: const Icon(Icons.add_shopping_cart),
                                         child: Text("Ver"),
-                                        tooltip: "Agregar al carrito",
+                                        tooltip: "ver producto",
                                         backgroundColor: Colors.blue,
                                       )
                                     ],

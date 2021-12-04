@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../busqueda.dart';
+import 'Token.dart';
 class Login extends StatefulWidget {
   @override
   LoginApp createState() => LoginApp();
@@ -24,7 +25,11 @@ class LoginApp extends State<Login> {
            // print("Correo encotrado");
             if (cursor.get("Contraseña")==pass.text){
               print("usuario_encontrado");
+
               flag=1;
+              Token tk=new Token();
+              tk.guardarToken(cursor.id);
+              Navigator.of(context).pop();
              // Navigator.push(context,MaterialPageRoute(builder: (_) => busqueda()));
             }
           }

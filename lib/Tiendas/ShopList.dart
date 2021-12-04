@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'ObjetoTienda.dart';
 import 'ShopOne.dart';
 
 class ShopList extends StatefulWidget {
@@ -10,7 +11,35 @@ class ShopList extends StatefulWidget {
 class ShopListApp extends State<ShopList> {
   @override
   String texto1 = "Comidas rápidas el Gordo --";
+  ObjetoTienda objTienda=new ObjetoTienda();
 
+
+
+  buscarDoc(String docId) async {
+    try {
+      CollectionReference ref =
+      FirebaseFirestore.instance.collection("Tiendas");
+      QuerySnapshot tienda = await ref.get();
+
+      if (tienda.docs.length != 0) {
+        for (var cursor in tienda.docs) {
+          if (cursor.id == docId) {
+            objTienda.nombre=cursor.get("nombreTienda");
+            objTienda.des_corta=cursor.get("descripcion");
+            objTienda.website=cursor.get("website");
+            objTienda.imagen=cursor.get("rutaFoto");
+            objTienda.idTienda=cursor.id;
+           // this.logo = cursor.get("rutaFoto");
+           // this.titulo = cursor.get("nombreTienda");
+
+            //print(widget.docId + " id importado");
+          }
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
   /// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   Widget build(BuildContext context) {
     ///++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -75,7 +104,8 @@ class ShopListApp extends State<ShopList> {
                                 ElevatedButton(
                                     onPressed: () {
                                       String idDoc=snapshot.data!.docs[index].id;
-                                      Navigator.push(context, MaterialPageRoute(builder: (_) => ShopOne(idDoc)));
+                                      buscarDoc(idDoc);
+                                      Navigator.push(context, MaterialPageRoute(builder: (_) => ShopOne(objTienda)));
                                     }, child: Text("Entrar"))
                               ],
                             ),
