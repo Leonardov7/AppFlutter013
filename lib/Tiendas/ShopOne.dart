@@ -1,3 +1,5 @@
+import 'package:appmovil13/Carrito/CarritoCompras.dart';
+import 'package:appmovil13/Carrito/Carrtio.dart';
 import 'package:appmovil13/Tiendas/ObjetoTienda.dart';
 import 'package:appmovil13/Usuarios/Login.dart';
 import 'package:appmovil13/Usuarios/Token.dart';
@@ -44,13 +46,16 @@ class ShopOneApp extends State<ShopOne> {
     }
   }*/
 
-  agregarCarrito(String idTienda,String idUser,String idItem) async {
+  agregarCarrito(Carrito cartShopping) async {
 
     try {
       await firebase.collection("Carrito").doc().set({
-        "UsuarioId": idUser,
-        "TiendaId": idTienda,
-        "ProductoId": idItem
+        "UsuarioId": cartShopping.idUser,
+        "NombreTienda": cartShopping.nombreTienda,
+        "ProductoId": cartShopping.idItem,
+        "PrecioItem":cartShopping.precioItem,
+        "NombreItem":cartShopping.nombreItem,
+        "Descripcion":cartShopping.descripcion,
       });
       //mensaje("Correcto","Registro correto");
     } catch (e) {
@@ -236,10 +241,19 @@ class ShopOneApp extends State<ShopOne> {
                                         onPressed: () async {
                                          // agregarCarrito();
                                           Token tk=new Token();
-                                          String idUser= await tk.validarToken();
+                                          String idUser= await tk.validarToken("");
                                           print(idUser);
+                                          Carrito cart=new Carrito();
+                                          cart.descripcion=snapshot.data!.docs[index].get("Descripcion");
+                                          cart.nombreItem=snapshot.data!.docs[index].get("Nombre");
+                                          cart.precioItem=snapshot.data!.docs[index].get("Precio");
+                                          cart.idItem=snapshot.data!.docs[index].id;
+                                          cart.nombreTienda=widget.tiendaObj.nombre;
+                                          cart.idUser=idUser;
                                           if(idUser !=  ""){
-                                            agregarCarrito(widget.tiendaObj.idTienda,idUser,snapshot.data!.docs[index].id);
+                                            agregarCarrito(cart);
+                                            Navigator.push(context,
+                                                MaterialPageRoute(builder: (_) => CarritoCompras(idUser)));
                                           }else{
                                             Navigator.push(context,
                                                     MaterialPageRoute(builder: (_) => Login()));
@@ -247,6 +261,7 @@ class ShopOneApp extends State<ShopOne> {
                                         },
                                         child:
                                             const Icon(Icons.add_shopping_cart),
+                                        heroTag: null,
                                         tooltip: "Agregar al carrito",
                                         backgroundColor: Colors.blue,
                                       ),
@@ -257,6 +272,7 @@ class ShopOneApp extends State<ShopOne> {
                                         //child: const Icon(Icons.add_shopping_cart),
                                         child: Text("Ver"),
                                         tooltip: "ver producto",
+                                        heroTag: null,
                                         backgroundColor: Colors.blue,
                                       )
                                     ],

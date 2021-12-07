@@ -11,7 +11,8 @@ class Login extends StatefulWidget {
 class LoginApp extends State<Login> {
   TextEditingController correo=TextEditingController();
   TextEditingController pass=TextEditingController();
-  
+
+
   validarDatos() async{
     try{
       CollectionReference ref=FirebaseFirestore.instance.collection("Usuarios");
@@ -28,6 +29,15 @@ class LoginApp extends State<Login> {
 
               flag=1;
               Token tk=new Token();
+              String idToken= await tk.validarToken("Login");
+              if (idToken!=""){
+                  final firebase=FirebaseFirestore.instance;
+                  try{
+                    firebase.collection("Tokens").doc(idToken).delete();
+                  }catch(e){
+                    print(e);
+                  }
+              }
               tk.guardarToken(cursor.id);
               Navigator.of(context).pop();
              // Navigator.push(context,MaterialPageRoute(builder: (_) => busqueda()));

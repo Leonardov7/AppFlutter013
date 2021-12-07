@@ -22,8 +22,9 @@ class Token {
     }
   }
 
-  validarToken() async {
+  validarToken(String x) async {
     String isSession = "";
+    String idToken="";
     try {
       await Firebase.initializeApp();
       isToken = (await FirebaseMessaging.instance.getToken())!;
@@ -34,6 +35,7 @@ class Token {
           if (cursor.get("TokenId") == isToken) {
             print("token encontrado");
             isSession=cursor.get("UserId");
+            idToken=cursor.id;
 
           }
         } //fin de for
@@ -44,6 +46,11 @@ class Token {
     } catch (e) {
       print(e);
     }
-    return isSession;
+    if (x=="Login"){
+      return idToken;
+    }else{
+      return isSession;
+    }
+
   }
 }
