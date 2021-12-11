@@ -37,6 +37,7 @@ dependencies:
   firebase_core:
   cloud_firestore:
   firebase_messaging:
+  google_maps_flutter: ^0.5.5
 
 dev_dependencies:
   flutter_test:

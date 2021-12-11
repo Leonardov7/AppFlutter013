@@ -16,16 +16,16 @@ class ShopOne extends StatefulWidget {
 
 class ShopOneApp extends State<ShopOne> {
   final firebase = FirebaseFirestore.instance;
- // String logo = "";
- // String titulo = "";
+  // String logo = "";
+  // String titulo = "";
   //String idTienda="";
- // String descripcion = "";
+  // String descripcion = "";
   int cont = 0;
   ShopOneApp() {
-   // buscarDoc();
+    // buscarDoc();
   }
 
- /* buscarDoc() async {
+  /* buscarDoc() async {
     try {
       CollectionReference ref =
           FirebaseFirestore.instance.collection("Tiendas");
@@ -47,15 +47,16 @@ class ShopOneApp extends State<ShopOne> {
   }*/
 
   agregarCarrito(Carrito cartShopping) async {
-
     try {
       await firebase.collection("Carrito").doc().set({
         "UsuarioId": cartShopping.idUser,
         "NombreTienda": cartShopping.nombreTienda,
         "ProductoId": cartShopping.idItem,
-        "PrecioItem":cartShopping.precioItem,
-        "NombreItem":cartShopping.nombreItem,
-        "Descripcion":cartShopping.descripcion,
+        "PrecioItem": cartShopping.precioItem,
+        "NombreItem": cartShopping.nombreItem,
+        "Descripcion": cartShopping.descripcion,
+        "Cantidad":cartShopping.cantidad,
+        "Total":cartShopping.total,
       });
       //mensaje("Correcto","Registro correto");
     } catch (e) {
@@ -66,7 +67,7 @@ class ShopOneApp extends State<ShopOne> {
 
   @override
   Widget build(BuildContext context) {
-   // print(widget.docId);
+    // print(widget.docId);
     Widget titleSection = Container(
       padding: const EdgeInsets.all(32),
       child: Row(
@@ -169,8 +170,8 @@ class ShopOneApp extends State<ShopOne> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) =>
-                                    RegistroProducto(widget.tiendaObj.idTienda)));
+                                builder: (_) => RegistroProducto(
+                                    widget.tiendaObj.idTienda)));
                       },
                       //child: const Icon(Icons.add_box),
                       child: Text("add"),
@@ -239,24 +240,40 @@ class ShopOneApp extends State<ShopOne> {
                                       ),
                                       FloatingActionButton(
                                         onPressed: () async {
-                                         // agregarCarrito();
-                                          Token tk=new Token();
-                                          String idUser= await tk.validarToken("");
+                                          // agregarCarrito();
+                                          Token tk = new Token();
+                                          String idUser =
+                                              await tk.validarToken("");
                                           print(idUser);
-                                          Carrito cart=new Carrito();
-                                          cart.descripcion=snapshot.data!.docs[index].get("Descripcion");
-                                          cart.nombreItem=snapshot.data!.docs[index].get("Nombre");
-                                          cart.precioItem=snapshot.data!.docs[index].get("Precio");
-                                          cart.idItem=snapshot.data!.docs[index].id;
-                                          cart.nombreTienda=widget.tiendaObj.nombre;
-                                          cart.idUser=idUser;
-                                          if(idUser !=  ""){
-                                            agregarCarrito(cart);
-                                            Navigator.push(context,
-                                                MaterialPageRoute(builder: (_) => CarritoCompras(idUser)));
-                                          }else{
-                                            Navigator.push(context,
-                                                    MaterialPageRoute(builder: (_) => Login()));
+                                          Carrito cart = new Carrito();
+                                          cart.descripcion = snapshot
+                                              .data!.docs[index]
+                                              .get("Descripcion");
+                                          cart.nombreItem = snapshot
+                                              .data!.docs[index]
+                                              .get("Nombre");
+                                          cart.precioItem = snapshot
+                                              .data!.docs[index]
+                                              .get("Precio");
+                                          cart.idItem =
+                                              snapshot.data!.docs[index].id;
+                                          cart.nombreTienda =
+                                              widget.tiendaObj.nombre;
+                                          cart.idUser = idUser;
+                                          if (idUser != "") {// si hay sessión activa
+
+                                            mensajeCantidad("Agregar al carrito","¿Desea agregar el artívulo al carrito?",cart);
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (_) =>
+                                                        CarritoCompras(
+                                                            idUser)));
+                                          } else {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (_) => Login()));
                                           }
                                         },
                                         child:
@@ -266,9 +283,7 @@ class ShopOneApp extends State<ShopOne> {
                                         backgroundColor: Colors.blue,
                                       ),
                                       FloatingActionButton(
-                                        onPressed: () {
-
-                                        },
+                                        onPressed: () {},
                                         //child: const Icon(Icons.add_shopping_cart),
                                         child: Text("Ver"),
                                         tooltip: "ver producto",
@@ -314,5 +329,56 @@ class ShopOneApp extends State<ShopOne> {
         ),
       ],
     );
+  }
+
+  void mensajeCantidad(String titulo, String mess, Carrito cart) {
+    TextEditingController cant=TextEditingController();
+
+    cant.text="1" ;
+
+    showDialog(
+        context: context,
+        builder: (builcontex) {
+          return AlertDialog(
+            title: Text(titulo),
+            content: Text(mess),
+            actions: [
+              Padding(
+                padding:
+                    EdgeInsets.only(left: 15, top: 15, right: 15, bottom: 0),
+                child: TextField(
+                  controller: cant,
+
+                  decoration: InputDecoration(
+                      labelText: "Cantidad ",
+                      hintText: "Digite Cantidad",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15))),
+                ),
+              ),
+              RaisedButton(
+                onPressed: () {
+                  //Navigator.of(context,rootNavigator: true).pop();// pendiente corregir
+                },
+                child: Text(
+                  "Cancelar",
+                  style: TextStyle(color: Colors.teal),
+                ),
+              ),
+              RaisedButton(
+                onPressed: () async {
+                  cart.cantidad=cant.text;
+                  cart.total=double.parse(cart.cantidad)*double.parse(cart.precioItem);
+                  await  agregarCarrito(cart);
+                  //  Navigator.of(context).pop();
+                },
+                child: Text(
+                  "Aceptar",
+                  style: TextStyle(color: Colors.teal),
+                ),
+              ),
+            ],
+          );
+        });
   }
 }

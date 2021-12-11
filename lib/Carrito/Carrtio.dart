@@ -5,4 +5,6 @@ class Carrito {
   var nombreItem="";
   var precioItem="";
   var descripcion="";
+  var cantidad="";
+  var total=0.0;
 }
