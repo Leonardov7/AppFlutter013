@@ -64,6 +64,24 @@ class ShopOneApp extends State<ShopOne> {
       // mensaje("Error...",""+e.toString());
     }
   }
+Future<String> buscarNombre (String idUser)async{
+    String nombreUsuario="";
+  try{
+    CollectionReference ref=FirebaseFirestore.instance.collection("Usuarios");
+    QuerySnapshot cart= await ref.get();
+
+    if(cart.docs.length !=0){
+      for(var cursor in cart.docs){
+        if(cursor.id==idUser){
+          nombreUsuario=cursor.get("Nombre");
+        }
+      }
+    }
+  }catch(e){print(e);}
+  return nombreUsuario;
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -263,12 +281,7 @@ class ShopOneApp extends State<ShopOne> {
                                           if (idUser != "") {// si hay sessión activa
 
                                             mensajeCantidad("Agregar al carrito","¿Desea agregar el artívulo al carrito?",cart);
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        CarritoCompras(
-                                                            idUser)));
+
                                           } else {
                                             Navigator.push(
                                                 context,
@@ -359,6 +372,7 @@ class ShopOneApp extends State<ShopOne> {
               RaisedButton(
                 onPressed: () {
                   //Navigator.of(context,rootNavigator: true).pop();// pendiente corregir
+                  Navigator.of(context).pop();
                 },
                 child: Text(
                   "Cancelar",
@@ -369,7 +383,16 @@ class ShopOneApp extends State<ShopOne> {
                 onPressed: () async {
                   cart.cantidad=cant.text;
                   cart.total=double.parse(cart.cantidad)*double.parse(cart.precioItem);
+                  cart.nombreUser=await buscarNombre(cart.idUser);
+
                   await  agregarCarrito(cart);
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              CarritoCompras(
+                                  cart)));
                   //  Navigator.of(context).pop();
                 },
                 child: Text(

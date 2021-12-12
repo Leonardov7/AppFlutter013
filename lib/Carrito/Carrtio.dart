@@ -7,4 +7,5 @@ class Carrito {
   var descripcion="";
   var cantidad="";
   var total=0.0;
+  var nombreUser="";
 }
